@@ -1,0 +1,14 @@
+# Visual Studio cache
+.vs/
+*.vsidx
+
+# Build folders
+bin/
+obj/
+
+# Logs
+*.log
+
+# User-specific files
+*.user
+*.suo
