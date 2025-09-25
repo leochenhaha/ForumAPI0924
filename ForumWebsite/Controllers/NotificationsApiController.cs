@@ -1,5 +1,6 @@
 using ForumWebsite.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace ForumWebsite.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class NotificationsApiController : BaseApiController
     {
         private readonly ForumDbContext _context;
@@ -31,7 +33,7 @@ namespace ForumWebsite.Controllers.Api
             var notifications = await _context.Notifications
                 .Where(n => n.RecipientId == userId)
                 .OrderByDescending(n => n.CreatedAt)
-                .Take(20) // Take latest 20 notifications
+                .Take(20)
                 .ToListAsync();
 
             return Ok(notifications);
@@ -39,13 +41,12 @@ namespace ForumWebsite.Controllers.Api
 
         // GET: api/notifications/unread
         [HttpGet("unread")]
-        [Authorize]
         public async Task<IActionResult> GetUnreadNotifications()
         {
             var userId = CurrentUserId();
             if (userId == null)
             {
-                return Unauthorized(); // Should not happen due to [Authorize]
+                return Unauthorized();
             }
 
             var notifications = await _context.Notifications
@@ -58,7 +59,6 @@ namespace ForumWebsite.Controllers.Api
 
         // GET: api/notifications/unread-count
         [HttpGet("unread-count")]
-        [Authorize]
         public async Task<IActionResult> GetUnreadCount()
         {
             try
@@ -66,7 +66,7 @@ namespace ForumWebsite.Controllers.Api
                 var userId = CurrentUserId();
                 if (userId == null)
                 {
-                    return Unauthorized(new { message = "���n�J��token�L��" });
+                    return Unauthorized(new { message = "請確認授權資訊", detail = "找不到使用者識別資訊" });
                 }
 
                 var count = await _context.Notifications
@@ -76,11 +76,10 @@ namespace ForumWebsite.Controllers.Api
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
+                return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
-                    message = "���A�����~",
-                    detail = ex.Message,
-                    stack = ex.StackTrace
+                    message = "系統發生錯誤",
+                    detail = ex.Message
                 });
             }
         }
@@ -91,7 +90,7 @@ namespace ForumWebsite.Controllers.Api
         {
             var userId = CurrentUserId();
             if (userId == null)
-            { 
+            {
                 return Unauthorized();
             }
 
