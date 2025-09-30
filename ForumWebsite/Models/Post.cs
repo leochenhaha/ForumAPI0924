@@ -1,29 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ForumWebsite.Models
 {
     public class Post
     {
-        [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "標題為必填")]
-        [StringLength(100, ErrorMessage = "標題不得超過 100 字元")]
-        public string Title { get; set; }
+        [Required]
+        [StringLength(200)]
+        public string Title { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "內容為必填")]
-        public string Content { get; set; }
+        [Required]
+        public string Content { get; set; } = string.Empty;
 
-        [ValidateNever]  // ✅ 不用對這個導覽屬性進行 Model 驗證
-        public List<Reply> Replies { get; set; } = new List<Reply>(); // ✅ 保留這個就好
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        [Required]
+        public int RegisterId { get; set; }
+        public Register Register { get; set; } = null!;
 
-        public int? RegisterId { get; set; }
-        public Register? Register { get; set; }
+        // ✅ 一篇文章可以有很多留言
+        public ICollection<Reply> Replies { get; set; } = new List<Reply>();
 
-        public List<PostVote> PostVotes { get; set; } = new List<PostVote>();
+        // ✅ 修改：原本是 ICollection<Report> → 現在改成 ICollection<PostReport>
+        public ICollection<PostReport> Reports { get; set; } = new List<PostReport>();
+
+        // ✅ 一篇文章可以被很多人投票
+        public ICollection<PostVote> PostVotes { get; set; } = new List<PostVote>();
     }
 }

@@ -3,7 +3,7 @@
 namespace ForumWebsite.Controllers.Api
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/health")] // ✅ 固定路徑：/api/health
     public class HealthCheckController : ControllerBase
     {
         [HttpGet]

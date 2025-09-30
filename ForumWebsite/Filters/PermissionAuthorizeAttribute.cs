@@ -20,6 +20,7 @@ namespace ForumWebsite.Filters
         {
             var role = context.HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
             var userIdClaim = context.HttpContext.User.FindFirst("userId")?.Value;
+
             int? userId = null;
             if (int.TryParse(userIdClaim, out int parsedUserId))
             {
@@ -27,9 +28,10 @@ namespace ForumWebsite.Filters
             }
 
             Console.WriteLine("=== PermissionAuthorize ===");
-            Console.WriteLine("UserId: " + userId);
+            Console.WriteLine("UserId: " + (userId?.ToString() ?? "null"));
             Console.WriteLine("UserRole: " + role);
 
+            // 未登入
             if (string.IsNullOrEmpty(role) || !Enum.TryParse(role, out PermissionLevel currentPermission))
             {
                 context.Result = new JsonResult(new
@@ -43,6 +45,7 @@ namespace ForumWebsite.Filters
                 return;
             }
 
+            // 權限不足
             if (currentPermission < _requiredPermission)
             {
                 context.Result = new JsonResult(new

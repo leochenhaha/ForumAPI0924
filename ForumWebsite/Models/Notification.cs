@@ -12,17 +12,17 @@ namespace ForumWebsite.Models
         public int RecipientId { get; set; }
 
         [ForeignKey("RecipientId")]
-        public Register Recipient { get; set; }
+        public Register? Recipient { get; set; }
 
         [Required]
         [StringLength(255)]
-        public string Message { get; set; }
+        public string Message { get; set; } = string.Empty;
 
         [StringLength(500)]
-        public string Link { get; set; }
+        public string? Link { get; set; }
 
         public bool IsRead { get; set; } = false;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
