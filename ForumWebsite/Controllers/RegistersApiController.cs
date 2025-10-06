@@ -248,6 +248,8 @@ namespace ForumWebsite.Controllers.Api
             createdAt = user.CreatedAt,
             lastLoginAt = user.LastLoginAt,
             lastActiveAt = user.LastActiveAt
+
+
         };
 
         private string GenerateJwtToken(Register user)
